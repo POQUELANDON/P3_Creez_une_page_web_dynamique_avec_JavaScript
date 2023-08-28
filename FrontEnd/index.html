@@ -9,17 +9,17 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="works.js"></script>
+	<script type="module" src="js/works.js"></script>
 </head>
 <body>
 <header>
 	<h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
-	<nav>
+	<nav aria-label="Main navigation">
 		<ul>
 			<li><a href="#portfolio">projets</a></li>
 			<li><a href="#contact">contact</a></li>
-			<li><a href="login.html">login</a></li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li><a href="login.html" id="login">login</a></li>
+			<li><img src="./assets/icons/icons8-instagram 1.svg" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
@@ -36,7 +36,11 @@
 		</article>
 	</section>
 	<section id="portfolio">
+		<div id="actions-container">
 		<h2>Mes Projets</h2>
+			<!-- Boutons modifier -->
+			<button type="button" class="edit-site" id="edit-site"><img src="./assets/icons/edit.svg" alt="Mode édition">modifier</button>
+		</div>
 		<div class="category-filters">
 		<!-- Les filtres de catégories sont ajoutés ici par JavaScript-->
 		</div>
@@ -60,7 +64,7 @@
 </main>
 
 <footer>
-	<nav>
+	<nav aria-label="footer navigation">
 		<ul>
 			<li>Mentions Légales</li>
 		</ul>

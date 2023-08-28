@@ -3,35 +3,110 @@
    License: none (public domain)
 */
 
-html, body, main, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, div, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+html,
+body,
+main,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+div,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, main, hgroup, menu, nav, section {
-	display: block;
-}
-
-body {
-  line-height: 1;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
 
 ol,
@@ -59,6 +134,7 @@ table {
 
 /** end reset css**/
 body {
+  line-height: 1;
   max-width: 1140px;
   margin: auto;
   font-family: "Work Sans";
@@ -71,7 +147,8 @@ header {
   margin: 50px 0;
 }
 
-section, .category-filter  {
+section,
+.category-filter {
   margin: 50px 0;
 }
 
@@ -145,8 +222,40 @@ a:hover {
 }
 
 #portfolio h2 {
+  display: flex;
   text-align: center;
   margin-bottom: 1em;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 30px;
+  margin-bottom: 1em;
+}
+
+#actions-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-content: stretch;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+#actions-container button{
+	display: none;
+	gap: 10px;
+	align-items: baseline;
+	justify-content: center;
+	flex-direction: row;
+	border: none;
+	background: none;
+	color: #000;
+	text-align: center;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
 }
 
 .category-filters {
@@ -188,41 +297,46 @@ a:hover {
 }
 
 .gallery img {
-	width: 100%;
-	width: 100%;
-
+  width: 100%;
   width: 100%;
 
+  width: 100%;
 }
 
-#contact, #login-container {
+#contact,
+#login-container {
   width: 50%;
   margin: auto;
 }
 
-#contact > *, #login-container > * {
-	text-align: center;
+#contact > *,
+#login-container > * {
+  text-align: center;
 }
 
-#contact h2, #login-container h2 {
+#contact h2,
+#login-container h2 {
   margin-bottom: 20px;
 }
 
-#contact form, #login-container form {
+#contact form,
+#login-container form {
   text-align: left;
   margin-top: 30px;
   display: flex;
   flex-direction: column;
 }
 
-#contact input, #login-container input {
+#contact input,
+#login-container input {
   height: 50px;
   font-size: 14px;
   border: none;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-#contact label, #login-container label  {
+#contact label,
+#login-container label {
   margin: 40px 0 7px 0;
 }
 
@@ -242,17 +356,21 @@ input[type="submit"] {
   border-radius: 60px;
 }
 
-#forgot-password a{
-	display: flex;
-	justify-content: center;
-	margin-bottom: 20%;
-	color: #3D3D3D;
-	font-family: Work Sans;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: normal;
-	text-decoration-line: underline;
+input[type="submit"]:hover{
+	background-color: #0E2F28;
+}
+
+#forgot-password a {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20%;
+  color: #3d3d3d;
+  font-family: Work Sans;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration-line: underline;
 }
 
 footer nav ul {

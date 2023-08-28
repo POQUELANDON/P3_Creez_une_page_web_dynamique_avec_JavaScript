@@ -11,13 +11,13 @@
         rel="stylesheet">
     <meta name="description" content="">
     <link rel="stylesheet" href="./assets/style.css">
-    <script src="works.js"></script>
+    <script type="module" src="js/works.js"></script>
 </head>
 
 <body>
     <header>
         <h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
-        <nav>
+        <nav aria-label="Main navigation">
             <ul>
                 <li><a href="index.html#portfolio">projets</a></li>
                 <li><a href="index.html#contact">contact</a></li>
@@ -35,6 +35,7 @@
                 <label for="password">Mot de passe</label>
                 <input type="password" id="password" name="password" required>
                 <input type="submit" value="Se connecter">
+                <button type="button" class="logout" style="display: none;">Se déconnecter</button>
                 <div id="forgot-password">
                     <a href="#">Mot de passe oublié</a>
                 </div>
@@ -43,11 +44,11 @@
     </main>
 
     <footer>
-        <nav>
+        <nav aria-label="footer navigation">
             <ul>
                 <li>Mentions Légales</li>
             </ul>
         </nav>
     </footer>
-    </body>
-    </html>
+</body>
+</html>

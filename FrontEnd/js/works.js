@@ -149,3 +149,85 @@ async function fetchWorksData() {
 
 // Appel initial pour récupérer les catégories depuis l'API
 fetchCategories();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const actionsContainer = document.querySelector('#actions-container');
+    if (actionsContainer) {
+
+        const editButton = actionsContainer.querySelector('.edit-site');
+
+        // Vérifier si l'utilisateur est connecté en vérifiant l'état de connexion dans localStorage
+        const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
+        const loggedIn = loggedInInfo && loggedInInfo.authenticated;
+
+        if (editButton) {
+            if (loggedIn) {
+                editButton.style.display = 'flex'; // Afficher le bouton edit-site
+            } else {
+                editButton.style.display = 'none'; // Cacher le bouton edit-site
+            }
+        }
+    }
+});
+
+// login.js - Module pour la page de connexion
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+
+    // Ajouter un gestionnaire d'événement pour la soumission du formulaire
+    loginForm.addEventListener('submit', handleLoginFormSubmit);
+
+    // Fonction pour afficher un message d'erreur
+    function displayErrorMessage(message) {
+        const errorParagraph = document.createElement('p');
+        errorParagraph.className = 'error-message';
+        errorParagraph.textContent = message;
+
+        const submitButton = loginForm.querySelector('input[type="submit"]');
+        loginForm.insertBefore(errorParagraph, submitButton);
+    }
+
+    function handleLoginFormSubmit(event) {
+        event.preventDefault();
+
+        // Supprimer les messages d'erreur précédents
+        const errorMessages = loginForm.querySelectorAll('.error-message');
+        errorMessages.forEach(message => message.remove());
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        fetch('http://localhost:5678/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    // Authentification réussie, enregistrer l'état dans le localStorage
+                    localStorage.setItem('loggedIn', JSON.stringify({ email, authenticated: true }));
+                    window.location.replace('index.html'); // Rediriger vers index.html
+                    return response.json();
+                } else if (response.status === 401) {
+                    const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
+                    displayErrorMessage(errorMessage);
+                    throw new Error(errorMessage);
+                } else {
+                    console.error('Échec de la connexion:', response.statusText);
+                    throw new Error('Échec de la connexion');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                const errorMessage = 'Une erreur est survenue lors de la connexion.';
+                displayErrorMessage(errorMessage);
+            });
+    }
+});
