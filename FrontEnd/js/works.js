@@ -150,26 +150,6 @@ async function fetchWorksData() {
 // Appel initial pour récupérer les catégories depuis l'API
 fetchCategories();
 
-document.addEventListener('DOMContentLoaded', () => {
-    const actionsContainer = document.querySelector('#actions-container');
-    if (actionsContainer) {
-
-        const editButton = actionsContainer.querySelector('.edit-site');
-
-        // Vérifier si l'utilisateur est connecté en vérifiant l'état de connexion dans localStorage
-        const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
-        const loggedIn = loggedInInfo && loggedInInfo.authenticated;
-
-        if (editButton) {
-            if (loggedIn) {
-                editButton.style.display = 'flex'; // Afficher le bouton edit-site
-            } else {
-                editButton.style.display = 'none'; // Cacher le bouton edit-site
-            }
-        }
-    }
-});
-
 // login.js - Module pour la page de connexion
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -178,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ajouter un gestionnaire d'événement pour la soumission du formulaire
     loginForm.addEventListener('submit', handleLoginFormSubmit);
 
-    // Fonction pour afficher un message d'erreur
     function displayErrorMessage(message) {
         const errorParagraph = document.createElement('p');
         errorParagraph.className = 'error-message';
@@ -190,10 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleLoginFormSubmit(event) {
         event.preventDefault();
-
-        // Supprimer les messages d'erreur précédents
-        const errorMessages = loginForm.querySelectorAll('.error-message');
-        errorMessages.forEach(message => message.remove());
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -211,9 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
                 if (response.status === 200) {
-                    // Authentification réussie, enregistrer l'état dans le localStorage
                     localStorage.setItem('loggedIn', JSON.stringify({ email, authenticated: true }));
-                    window.location.replace('index.html'); // Rediriger vers index.html
+                    window.location.replace('index.html');
                     return response.json();
                 } else if (response.status === 401) {
                     const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
@@ -231,3 +205,68 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 });
+
+// Afficher le contenu administrateur
+document.addEventListener('DOMContentLoaded', () => {
+    const actionsContainers = document.querySelectorAll('.actions-container');
+    const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
+
+    if (loggedInInfo && loggedInInfo.authenticated) {
+        // Retirer les filtres de catégories
+        const categoryFiltersContainer = document.querySelector('.category-filters');
+        categoryFiltersContainer.style.display = 'none';
+
+        // Créer le div du bandeau d'administration
+        const adminBanner = document.createElement('div');
+        adminBanner.className = 'admin-banner';
+
+        // Créer les éléments dans le bandeau administrateur
+        const editIcon = document.createElement('img');
+        editIcon.src = './assets/icons/edit_white.svg';
+        editIcon.alt = 'Mode édition';
+
+        const editModeText = document.createElement('span');
+        editModeText.textContent = 'Mode édition';
+
+        const publishButton = document.createElement('button');
+        publishButton.type = 'button';
+        publishButton.id = 'publish-changes';
+        publishButton.textContent = 'Publier les changements';
+
+        adminBanner.appendChild(editIcon);
+        adminBanner.appendChild(editModeText);
+        adminBanner.appendChild(publishButton);
+
+        // Insérer le bandeau d'administration au-dessus de la balise header
+        const header = document.querySelector('header');
+        header.insertAdjacentElement('beforebegin', adminBanner);
+
+        // Créer les éléments "Éditer site" dans chaque container d'actions
+        actionsContainers.forEach(container => {
+            const editSiteButton = document.createElement('button');
+            editSiteButton.type = 'button';
+            editSiteButton.className = 'edit-site';
+
+            const editIcon = document.createElement('img');
+            editIcon.src = './assets/icons/edit.svg';
+            editIcon.alt = 'Mode édition';
+
+            const editText = document.createTextNode('modifier');
+            editSiteButton.appendChild(editIcon);
+            editSiteButton.appendChild(editText);
+
+            container.appendChild(editSiteButton);
+        });
+
+        // Publier les changements
+
+        // Gérer la déconnexion
+        const loginLink = document.getElementById('login');
+        loginLink.textContent = 'logout';
+
+        loginLink.addEventListener('click', () => {
+            localStorage.removeItem('loggedIn');
+        });
+    }
+});
+
