@@ -9,24 +9,29 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="works.js"></script>
+	<script type="module" src="js/works.js"></script>
 </head>
 <body>
+<!-- Bandeau administreur site -->
 <header>
-	<h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
-	<nav>
+	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<nav aria-label="Main navigation">
 		<ul>
-			<li>projets</li>
-			<li>contact</li>
-			<li>login</li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li><a href="#portfolio">projets</a></li>
+			<li><a href="#contact">contact</a></li>
+			<li><a href="login.html" id="login">login</a></li>
+			<li><img src="./assets/icons/icons8-instagram 1.svg" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
+
 <main>
 	<section id="introduction">
 		<figure>
-			<img src="./assets/images/sophie-bluel.png" alt="">
+			<img src="./assets/images/sophie-bluel.png" alt="sophie-bluel">
+			<div class="actions-container">
+			<!-- Boutons éditer site -->
+			</div>
 		</figure>
 		<article>
 			<h2>Designer d'espace</h2>
@@ -36,7 +41,11 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		
+		<div class="actions-container">
+			<h2>Mes Projets</h2>
+			<!-- Boutons éditer site -->
+		</div>
 		<div class="category-filters">
 		<!-- Les filtres de catégories sont ajoutés ici par JavaScript-->
 		</div>
@@ -60,7 +69,7 @@
 </main>
 
 <footer>
-	<nav>
+	<nav aria-label="footer navigation">
 		<ul>
 			<li>Mentions Légales</li>
 		</ul>
