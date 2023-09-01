@@ -20,7 +20,7 @@
 			<li><a href="#portfolio">projets</a></li>
 			<li><a href="#contact">contact</a></li>
 			<li><a href="login.html" id="login">login</a></li>
-			<li><img src="./assets/icons/icons8-instagram 1.svg" alt="Instagram"></li>
+			<li><img src="./assets/icons/icons8-instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
@@ -28,7 +28,7 @@
 <main>
 	<section id="introduction">
 		<figure>
-			<img src="./assets/images/sophie-bluel.png" alt="sophie-bluel">
+			<img class="photo" src="./assets/images/sophie-bluel.png" alt="sophie-bluel">
 			<div class="actions-container">
 			<!-- Boutons éditer site -->
 			</div>
@@ -45,6 +45,39 @@
 		<div class="actions-container">
 			<h2>Mes Projets</h2>
 			<!-- Boutons éditer site -->
+			<!-- gallery-modal -->
+			<aside id="gallery-modal" class="modal" aria-hidden="true" aria-labelledby="titleModal" style="display: none;">
+				<div class="modal-wrapper" id="modal">
+					<button type="button" class="close-modal"><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></button>
+					<h3 id="titleModal" class="modal-title">Galerie photo</h3>
+					<div class="gallery-modal-content" id="gallery-modal-content">
+						<!-- Les projets sont ajoutés ici par JavaScript -->
+					</div>
+					<a href="#add-photo-modal">Ajouter une photo</a>
+					<button type="button" class="gallery-delete" id="gallery-delete" aria-label="gallery-delete">Supprimer la galerie</button>
+				</div>
+			</aside>
+			<aside id="add-photo-modal" class="modal" aria-hidden="true" aria-labelledby="titleModal2" style="display: none;">
+				<div class="modal-wrapper" id="add-photo">
+					<h3 id="titleModal2" class="modal-title">Ajout photo</h3>
+					<button type="button" class="close-modal">X</button>
+					<form id="add-photo-form">
+						<div>
+							<label for="image">Image</label>
+							<input type="file" id="image" name="image" accept=".jpg, .png" required>
+						</div>
+						<div>
+							<label for="title">Titre</label>
+							<input type="text" id="title" name="title" required>
+						</div>
+						<div>
+						<!-- Options de catégorie seront ajoutées dynamiquement -->	
+						</div>
+						<button type="submit" id="add-photo-button" disabled>Valider</button>
+					</form>
+					<p id="error-message" class="error-message"></p>
+				</div>
+			</aside>
 		</div>
 		<div class="category-filters">
 		<!-- Les filtres de catégories sont ajoutés ici par JavaScript-->

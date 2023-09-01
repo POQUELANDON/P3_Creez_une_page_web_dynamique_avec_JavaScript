@@ -243,22 +243,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Créer les éléments "Éditer site" dans chaque container d'actions
         actionsContainers.forEach(container => {
-            const editSiteButton = document.createElement('button');
-            editSiteButton.type = 'button';
-            editSiteButton.className = 'edit-site';
+            const editSiteLink = document.createElement('a');
+            editSiteLink.href = '#gallery-modal';
+            editSiteLink.className = 'js-modal';
 
             const editIcon = document.createElement('img');
             editIcon.src = './assets/icons/edit.svg';
             editIcon.alt = 'Mode édition';
 
             const editText = document.createTextNode('modifier');
-            editSiteButton.appendChild(editIcon);
-            editSiteButton.appendChild(editText);
+            editSiteLink.appendChild(editIcon);
+            editSiteLink.appendChild(editText);
 
-            container.appendChild(editSiteButton);
+            container.appendChild(editSiteLink);
         });
-
-        // Publier les changements
 
         // Gérer la déconnexion
         const loginLink = document.getElementById('login');
@@ -270,3 +268,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
+    const editSiteLinks = document.querySelectorAll('.js-modal');
+    const modal = document.getElementById('gallery-modal');
+    const modalContent = document.getElementById('gallery-modal-content');
+
+    // Vérifier si l'utilisateur est connecté
+    if (loggedInInfo && loggedInInfo.authenticated) {
+        editSiteLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Ouvrir la fenêtre modale
+                modal.style.display = null;
+                modal.setAttribute('aria-hidden', 'false');
+                modal.setAttribute('aria-modal', 'true');
+                // Récupérer les images des works
+                const worksImages = Array.from(worksData).map(work => work.imageUrl);
+
+                // Afficher les images dans la fenêtre modale
+                modalContent.innerHTML = '';
+                worksImages.forEach(imageUrl => {
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    modalContent.appendChild(img);
+                });
+            });
+        });
+
+        // Fermer la fenêtre modale en cliquant en dehors ou sur l'élément de fermeture
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal || event.target.classList.contains('close-modal')) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.removeAttribute('aria-modal');
+                modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
+            }
+        });
+    }
+});
