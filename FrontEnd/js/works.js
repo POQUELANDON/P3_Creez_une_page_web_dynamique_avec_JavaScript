@@ -1,4 +1,3 @@
-// Initialisation des variables
 let worksData = new Set();
 let categoriesData = [];
 let categoryButtons = [];
@@ -151,13 +150,13 @@ async function fetchWorksData() {
 fetchCategories();
 
 // login.js - Module pour la page de connexion
-
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
 
     // Ajouter un gestionnaire d'événement pour la soumission du formulaire
     loginForm.addEventListener('submit', handleLoginFormSubmit);
 
+    // Fonction pour afficher un message d'erreur
     function displayErrorMessage(message) {
         const errorParagraph = document.createElement('p');
         errorParagraph.className = 'error-message';
@@ -167,42 +166,45 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.insertBefore(errorParagraph, submitButton);
     }
 
-    function handleLoginFormSubmit(event) {
+    // Fonction pour gérer la soumission du formulaire de connexion
+    async function handleLoginFormSubmit(event) {
         event.preventDefault();
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        fetch('http://localhost:5678/api/users/login', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    localStorage.setItem('loggedIn', JSON.stringify({ email, authenticated: true }));
-                    window.location.replace('index.html');
-                    return response.json();
-                } else if (response.status === 401) {
-                    const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
-                    displayErrorMessage(errorMessage);
-                    throw new Error(errorMessage);
-                } else {
-                    console.error('Échec de la connexion:', response.statusText);
-                    throw new Error('Échec de la connexion');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                const errorMessage = 'Une erreur est survenue lors de la connexion.';
-                displayErrorMessage(errorMessage);
+        try {
+            const response = await fetch('http://localhost:5678/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
             });
+
+            if (response.status === 200) {
+                const responseData = await response.json(); // Convertir la réponse en JSON
+                const token = responseData.token; // Extraire le token de la réponse
+
+                // Stocker le token d'authentification dans le localStorage
+                localStorage.setItem('loggedIn', JSON.stringify({ email, authenticated: true, token }));
+
+                window.location.replace('index.html'); // Rediriger vers la page principale
+            } else if (response.status === 401) {
+                const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
+                displayErrorMessage(errorMessage);
+            } else {
+                console.error('Échec de la connexion:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            const errorMessage = 'Une erreur est survenue lors de la connexion.';
+            displayErrorMessage(errorMessage);
+        }
     }
 });
 
@@ -263,11 +265,44 @@ document.addEventListener('DOMContentLoaded', () => {
         loginLink.textContent = 'logout';
 
         loginLink.addEventListener('click', () => {
-            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('loggedIn'); // Supprimer les informations de connexion
         });
     }
 });
 
+// Fonction utilitaire pour envoyer des demandes authentifiées
+async function authenticatedRequest(url, method, data = {}) {
+    const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
+    if (!loggedInInfo || !loggedInInfo.authenticated || !loggedInInfo.token) {
+        throw new Error('User is not authenticated.');
+    }
+
+    const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // Ajouter le token d'authentification dans les en-têtes
+        'Authorization': `Bearer ${loggedInInfo.token}`
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: headers,
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error('Erreur:', error);
+        throw error;
+    }
+}
+
+// Afficher la modal de gestion des works
 document.addEventListener('DOMContentLoaded', () => {
     const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
     const editSiteLinks = document.querySelectorAll('.js-modal');
@@ -278,31 +313,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loggedInInfo && loggedInInfo.authenticated) {
         editSiteLinks.forEach(link => {
             link.addEventListener('click', () => {
+
                 // Ouvrir la fenêtre modale
                 modal.style.display = null;
                 modal.setAttribute('aria-hidden', 'false');
                 modal.setAttribute('aria-modal', 'true');
-               
+
                 // Récupérer les images des works
                 const worksImages = Array.from(worksData);
 
                 // Générer le contenu HTML pour les images dans la fenêtre modale
                 let modalContentHTML = '';
                 worksImages.forEach(work => {
-                    modalContentHTML += `
-                        <div>
-                            <div class="js-modal-image">
-                                <img src="${work.imageUrl}" alt="${work.title}">
-                                <img id="work-delete" src="./assets/icons/trash-can-solid.svg" alt="Supprimer">
+                    modalContentHTML +=
+                        `<div data-work-id="${work.id}">
+                                    <div class="js-modal-image">
+                                        <img src="${work.imageUrl}" alt="${work.title}">
+                                        <img id="work-delete" src="./assets/icons/trash-can-solid.svg" alt="Supprimer">
+                                    </div>
+                                    <h4>éditer</h4>
                             </div>
-                            <h4>éditer</h4>
-                        </div>
-                        `;
+                            `;
                 });
 
                 // Injecter le contenu HTML dans la fenêtre modale
                 modalContent.innerHTML = modalContentHTML;
-
             });
         });
 
@@ -316,4 +351,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Suppression de work dans la fenêtre modale
+    modalContent.addEventListener('click', async (event) => {
+        if (event.target.id === 'work-delete') {
+            const workContainer = event.target.closest('div[data-work-id]');
+            if (!workContainer) {
+                return;
+            }
+
+            const workId = workContainer.getAttribute('data-work-id');
+
+            try {
+                await authenticatedRequest(`http://localhost:5678/api/works/${workId}`, 'DELETE');
+                workContainer.remove(); // Supprimer l'élément du DOM
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    });
 });

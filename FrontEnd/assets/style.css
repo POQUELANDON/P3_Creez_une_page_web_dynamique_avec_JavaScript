@@ -321,7 +321,7 @@ h3.modal-title {
   line-height: normal;
 }
 
-.modal-wrapper p {
+.modal-wrapper span {
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
