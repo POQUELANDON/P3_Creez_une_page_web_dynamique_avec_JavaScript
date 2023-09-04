@@ -282,16 +282,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = null;
                 modal.setAttribute('aria-hidden', 'false');
                 modal.setAttribute('aria-modal', 'true');
+               
                 // Récupérer les images des works
-                const worksImages = Array.from(worksData).map(work => work.imageUrl);
+                const worksImages = Array.from(worksData);
 
-                // Afficher les images dans la fenêtre modale
-                modalContent.innerHTML = '';
-                worksImages.forEach(imageUrl => {
-                    const img = document.createElement('img');
-                    img.src = imageUrl;
-                    modalContent.appendChild(img);
+                // Générer le contenu HTML pour les images dans la fenêtre modale
+                let modalContentHTML = '';
+                worksImages.forEach(work => {
+                    modalContentHTML += `
+                        <div>
+                            <div class="js-modal-image">
+                                <img src="${work.imageUrl}" alt="${work.title}">
+                                <img id="work-delete" src="./assets/icons/trash-can-solid.svg" alt="Supprimer">
+                            </div>
+                            <h4>éditer</h4>
+                        </div>
+                        `;
                 });
+
+                // Injecter le contenu HTML dans la fenêtre modale
+                modalContent.innerHTML = modalContentHTML;
+
             });
         });
 
