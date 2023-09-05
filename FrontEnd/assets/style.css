@@ -144,7 +144,7 @@ table {
   background: #000;
   color: #FFF;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -158,7 +158,7 @@ table {
   background: #FFF;
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -272,7 +272,7 @@ a.js-modal {
   text-decoration: none;
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -303,7 +303,7 @@ a.js-modal {
   background-color: #fff;
   max-width: 630px;
   max-height: 731px;
-  border: 1px solid #888 321vw;
+  border: 1px solid #888;
   width: 100%;
   height: max-content;
   flex-direction: column;
@@ -314,7 +314,7 @@ a.js-modal {
 h3.modal-title {
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 26px;
   font-style: normal;
   font-weight: 400;
@@ -377,15 +377,14 @@ right: 0;
 
 #gallery-modal-content h4 {
   color: #000;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
-#modal>a {
-  display: flex;
+#add-photo-modal {
   text-decoration: none;
   color: #FFF;
   width: 237px;
@@ -397,11 +396,13 @@ right: 0;
   line-height: normal;
   border-radius: 60px;
   background: #1D6154;
-  justify-content: center;
-  align-items: center;
   margin: 30px;
 }
 
+#modal-actions {
+  display: flex;
+  flex-direction: column;
+}
 
 #gallery-delete {
 text-decoration: none;
@@ -416,6 +417,71 @@ font-weight: 400;
 line-height: normal;
 cursor: pointer;
 padding-bottom: 48px;
+}
+
+.add-photo-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+}
+
+label.image-input{
+  display: flex;
+  width: 420px;
+  height: 169px;
+  border-radius: 3px;
+  background: #E8F1F6;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-no-input{
+  width: 76px;
+  height: 76px;
+}
+
+#image-input[type="file"] {
+  text-decoration: none;
+  border-radius: 50px;
+  background: #CBD6DC;
+  width: 173px;
+  height: 36px;
+}
+
+.title-input {
+  color: #3D3D3D;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+#title-input, #category-input {
+  width: 420px;
+  height: 51px;
+  background: #FFF;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+}
+
+#photo-modal-actions{
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 30px;
+  padding-bottom: 55px;
+  padding-top: 32px;
+}
+
+#submit-button {
+  width: 237px;
+  height: 36px;
+  border-radius: 60px;
+  background: #A7A7A7;
 }
 
 .actions-container {
@@ -531,7 +597,7 @@ input[type="submit"]:hover {
   justify-content: center;
   margin-bottom: 20%;
   color: #3d3d3d;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 500;

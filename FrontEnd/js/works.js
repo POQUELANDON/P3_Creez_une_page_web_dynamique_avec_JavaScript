@@ -307,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
     const editSiteLinks = document.querySelectorAll('.js-modal');
     const modal = document.getElementById('gallery-modal');
+    const warpperModal = document.getElementById('modal');
     const modalContent = document.getElementById('gallery-modal-content');
 
     // Vérifier si l'utilisateur est connecté
@@ -318,6 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = null;
                 modal.setAttribute('aria-hidden', 'false');
                 modal.setAttribute('aria-modal', 'true');
+                warpperModal.style.display = null;
+                modalContent.style.display = null;
 
                 // Récupérer les images des works
                 const worksImages = Array.from(worksData);
@@ -347,6 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = 'none';
                 modal.setAttribute('aria-hidden', 'true');
                 modal.removeAttribute('aria-modal');
+                modalContent.style.display = 'none';
                 modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
             }
         });
@@ -368,6 +372,153 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Error:', error);
             }
+        }
+    });
+
+    // Afficher la modal d'ajout des works
+    const addPhotoModal = document.getElementById('add-modal');
+    const addPhotoButton = document.getElementById('add-photo-modal');
+    const submitButton = document.getElementById('submit-button');
+    const errorMessage = document.getElementById('error-message');
+
+    // Gérer l'ouverture de la fenêtre modale
+    addPhotoButton.addEventListener('click', () => {
+        warpperModal.style.display = 'none';
+        modalContent.style.display = 'none';
+        modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
+        addPhotoModal.style.display = null;
+        renderAddPhotoForm();
+    });
+
+    // Fermer la fenêtre modale en cliquant en dehors ou sur l'élément de fermeture
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal || event.target.classList.contains('close-modal')) {
+        addPhotoModal.style.display = 'none';
+        errorMessage.style.display = 'none';
+        }
+    });
+
+    function getLastWorkId() {
+        // Parcourir la liste des works existants et trouver le dernier ID
+        let lastId = 0;
+        worksData.forEach(work => {
+            if (work.id > lastId) {
+                lastId = work.id;
+            }
+        });
+        return lastId;
+    }
+
+    // Fonction pour afficher le formulaire dans la fenêtre modale
+    function renderAddPhotoForm() {
+        const formHTML = `
+                <label for="image-input" class="image-input">
+                <input type="hidden" id="work-id-input" value="">
+                <img class="image-no-input" src="./assets/icons/picture-svgrepo-com.svg" alt="image-input">
+                <input type="file" id="image-input" accept=".jpg, .png" required value="+ Ajouter">
+                <p></p>jpg, png ; 4 Mo maximum.</p>
+                </label>
+                <label for="title-input" class="title-input">Titre</label>
+                <input type="text" id="title-input" required>
+                <label for="category-input" class="title-input">Catégorie</label>
+                <select id="category-input" required>
+                <option value="" disabled selected></option>
+                    <!-- Insérez ici les options de catégorie depuis les données -->
+                </select>
+        `;
+        const modalContent = document.getElementById('add-photo-form');
+        modalContent.innerHTML = formHTML;
+
+        // Charger les catégories depuis les données
+        loadCategories();
+    }
+
+    // Fonction pour charger les catégories depuis les données
+    async function loadCategories() {
+        try {
+            const response = await fetch('http://localhost:5678/api/categories', {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const categories = await response.json();
+                const categoryInput = document.getElementById('category-input');
+
+                // Remplir la liste déroulante des catégories
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id; // L'ID de la catégorie  envoyé à l'API
+                    option.textContent = category.name; // Afficher le nom de la catégorie
+                    categoryInput.appendChild(option);
+                });
+            } else {
+                console.error('Error fetching categories:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    }
+
+    // Gérer la soumission du formulaire
+    submitButton.addEventListener('click', async () => {
+        // Récupérer le dernier ID disponible dans la liste des works
+        const lastWorkId = getLastWorkId();
+        // Générer un nouvel ID en incrémentant le dernier ID
+        const newWorkId = lastWorkId + 1;
+        // Mettre à jour la valeur du champ de formulaire caché
+        document.getElementById('work-id-input').value = newWorkId;
+        // Récupérer les valeurs du formulaire
+        const imageInput = document.getElementById('image-input');
+        const titleInput = document.getElementById('title-input');
+        const categoryInput = document.getElementById('category-input');
+
+        const imageFile = imageInput.files[0];
+        const title = titleInput.value;
+        const categoryId = categoryInput.value;
+
+        // Vérifier que tous les champs sont remplis
+        if (!imageFile || !title || !categoryId) {
+            errorMessage.textContent = 'Tous les champs sont obligatoires.';
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        // Créer un objet FormData pour envoyer les données au format multipart/form-data
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('title', title);
+        formData.append('category', categoryId);
+
+        try {
+            const response = await fetch('http://localhost:5678/api/works', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${loggedInInfo.token}`
+                },
+                body: formData,
+            });
+
+            if (response.status === 201) {
+                // Le work a été ajouté avec succès
+                addPhotoModal.style.display = 'none';
+
+                // Réinitialiser le formulaire
+                imageInput.value = '';
+                titleInput.value = '';
+                categoryInput.value = '';
+
+                // Recharger la galerie
+                await fetchWorksData();
+            } else {
+                // Afficher une erreur en cas d'échec de la requête
+                errorMessage.textContent = 'Une erreur est survenue lors de l\'ajout du work.';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
         }
     });
 });
