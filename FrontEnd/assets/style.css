@@ -303,7 +303,7 @@ a.js-modal {
   background-color: #fff;
   max-width: 630px;
   max-height: 731px;
-  border: 1px solid #888;
+  border: 1px solid #B3B3B3;
   width: 100%;
   height: max-content;
   flex-direction: column;
@@ -425,9 +425,12 @@ padding-bottom: 48px;
   align-items: flex-start;
   justify-content: center;
   gap: 10px;
+  padding-top: 36px;
+  padding-bottom: 47px;
+  border-bottom: 1px solid #B3B3B3;
 }
 
-label.image-input{
+.image-input {
   display: flex;
   width: 420px;
   height: 169px;
@@ -436,6 +439,24 @@ label.image-input{
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+}
+
+.add-input {
+  display: flex;
+  width: 173px;
+  height: 36px;
+  border-radius: 50px;
+  background: #CBD6DC;
+  align-items: center;
+  justify-content: center;
+  color: #306685;
+  text-align: center;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .image-no-input{
@@ -443,12 +464,18 @@ label.image-input{
   height: 76px;
 }
 
-#image-input[type="file"] {
-  text-decoration: none;
-  border-radius: 50px;
-  background: #CBD6DC;
-  width: 173px;
-  height: 36px;
+input[type=file] {
+  display: none;
+}
+
+.image-input>p{
+  color: #444;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .title-input {
@@ -461,10 +488,17 @@ label.image-input{
 }
 
 #title-input, #category-input {
+  border: none;
   width: 420px;
   height: 51px;
   background: #FFF;
   box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+  color: #444;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 #photo-modal-actions{
@@ -478,10 +512,18 @@ label.image-input{
 }
 
 #submit-button {
+  border: none;
   width: 237px;
   height: 36px;
   border-radius: 60px;
   background: #A7A7A7;
+  color: #FFF;
+  text-align: center;
+  font-family: Syne;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .actions-container {

@@ -412,12 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fonction pour afficher le formulaire dans la fenêtre modale
     function renderAddPhotoForm() {
         const formHTML = `
-                <label for="image-input" class="image-input">
+                <div class="image-input">
                 <input type="hidden" id="work-id-input" value="">
-                <img class="image-no-input" src="./assets/icons/picture-svgrepo-com.svg" alt="image-input">
-                <input type="file" id="image-input" accept=".jpg, .png" required value="+ Ajouter">
-                <p></p>jpg, png ; 4 Mo maximum.</p>
-                </label>
+                <img class="image-no-input" id="preview-image" src="./assets/icons/picture-svgrepo-com.svg" alt="Image preview">
+                <label for="image-input" id="add-input" class="add-input">+ Ajouter</label>
+                <input type="file" id="image-input" accept=".jpg, .png" name="+ Ajouter" value="./assets/images" required>
+                <p>jpg, png ; 4 Mo maximum.</p>
+                </div>
                 <label for="title-input" class="title-input">Titre</label>
                 <input type="text" id="title-input" required>
                 <label for="category-input" class="title-input">Catégorie</label>
@@ -425,9 +426,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 <option value="" disabled selected></option>
                     <!-- Insérez ici les options de catégorie depuis les données -->
                 </select>
-        `;
-        const modalContent = document.getElementById('add-photo-form');
-        modalContent.innerHTML = formHTML;
+                `;
+                
+                const modalContent = document.getElementById('add-photo-form');
+                modalContent.innerHTML = formHTML;
+
+    // Fonction preview photo modal "add-photo"
+    const imageInput = document.getElementById('image-input');
+    imageInput.addEventListener('change', handleImageInputChange);
+
+        function handleImageInputChange(event) {
+            const selectedFile = event.target.files[0];
+            const label = event.target.parentElement; // Obtenez le label parent
+
+            // Vérifier si un fichier a été sélectionné
+            if (selectedFile) {
+                // Vérifier la taille du fichier (4 Mo maximum)
+                if (selectedFile.size > 4 * 1024 * 1024) { // 4 Mo en octets
+                    displayErrorMessage('L\'image ne doit pas dépasser 4 Mo.');
+                    event.target.value = ''; // Effacer la sélection de fichier
+                    return;
+                }
+
+                // Vérifier le format du fichier (jpg ou png)
+                const allowedFormats = ['image/jpeg', 'image/png'];
+                if (!allowedFormats.includes(selectedFile.type)) {
+                    displayErrorMessage('L\'image doit être au format JPG ou PNG.');
+                    event.target.value = ''; // Effacer la sélection de fichier
+                    return;
+                }
+
+                // Masquer les éléments input et p
+                const previewImage = document.getElementById('preview-image');
+                const labelledImage = document.getElementById('add-input');
+
+                event.target.style.display = 'none';
+                event.target.nextElementSibling.style.display = 'none'; // Le paragraphe p
+                label.style.justifyContent = 'center'; // Centrer l'image dans le label
+                previewImage.style.width = '129px'; // Agrandir l'image
+                previewImage.style.height = '193px';
+                labelledImage.style.display = 'none'; //Label preview image
+
+                // Prévisualiser l'image à l'aide de FileReader
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const previewImage = document.getElementById('preview-image');
+                    previewImage.src = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                // Si aucun fichier n'a été sélectionné, restaurer l'image par défaut
+                previewImage.src = './assets/icons/picture-svgrepo-com.svg';
+
+                // Réafficher les éléments input et p
+                event.target.style.display = 'block';
+                event.target.nextElementSibling.style.display = 'block'; // Le paragraphe p
+                label.style.justifyContent = 'space-between'; // Rétablir l'alignement
+            }
+        }
+
+    function displayErrorMessage(message) {
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+    
 
         // Charger les catégories depuis les données
         loadCategories();
@@ -488,6 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Créer un objet FormData pour envoyer les données au format multipart/form-data
         const formData = new FormData();
+        formData.append('id', newWorkId);
         formData.append('image', imageFile);
         formData.append('title', title);
         formData.append('category', categoryId);
@@ -504,6 +568,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.status === 201) {
                 // Le work a été ajouté avec succès
                 addPhotoModal.style.display = 'none';
+                console.log('Le work a été ajouté avec succès');
+                console.log('worksData');
 
                 // Réinitialiser le formulaire
                 imageInput.value = '';
