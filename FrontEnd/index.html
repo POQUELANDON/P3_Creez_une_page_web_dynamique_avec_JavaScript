@@ -29,9 +29,6 @@
 	<section id="introduction">
 		<figure>
 			<img class="photo" src="./assets/images/sophie-bluel.png" alt="sophie-bluel">
-			<div class="actions-container">
-			<!-- Boutons éditer site -->
-			</div>
 		</figure>
 		<article>
 			<h2>Designer d'espace</h2>
@@ -48,25 +45,25 @@
 			<!-- modal -->
 			<aside id="gallery-modal" class="modal" aria-hidden="true" aria-labelledby="titleModal" style="display: none;">
 				<div class="modal-wrapper" id="modal" style="display: none;">
-					<span><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
+					<span class="gallery-modal"><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
 					<h3 id="titleModal" class="modal-title">Galerie photo</h3>
 					<div class="gallery-modal-content" id="gallery-modal-content" style="display: none;">
 						<!-- js-gallery-modal -->
 					</div>
 					<div class="modal-wrapper-actions" id="modal-actions">
 						<button type="button" class="add-photo-modal" id="add-photo-modal">Ajouter une photo</button>
-						<button type="button" class="gallery-delete" id="gallery-delete" aria-label="gallery-delete">Supprimer la galerie</button>
 					</div>
 				</div>
 				<div class="modal-wrapper" id="add-modal" style="display: none;">
-					<span><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
+					<span class="add-modal"><img class="return-gallery-modal" id="return-gallery-modal" src="./assets/icons/Vector.svg" alt="return-gallery-modal">
+					<img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
 					<h3 id="titleModal2" class="modal-title">Ajout photo</h3>
 					<div class="add-photo-modal-content" id="add-photo-modal-content">
 						<form id="add-photo-form" class="add-photo-form">
-								<!-- js-add-photo-form-->
+								<!-- js-form-add-photo-form-->
 						</form>
 						<div class="modal-wrapper-actions" id="photo-modal-actions">
-							<button type="button" id="submit-button">Valider</button>
+							<button type="button" id="submit-button" class="grey-submit-button">Valider</button>
 							<p id="error-message" class="error-message"></p>
 						</div>
 					</div>
