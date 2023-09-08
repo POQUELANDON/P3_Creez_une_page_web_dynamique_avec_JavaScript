@@ -29,9 +29,6 @@
 	<section id="introduction">
 		<figure>
 			<img class="photo" src="./assets/images/sophie-bluel.png" alt="sophie-bluel">
-			<div class="actions-container">
-			<!-- Boutons éditer site -->
-			</div>
 		</figure>
 		<article>
 			<h2>Designer d'espace</h2>
@@ -45,37 +42,31 @@
 		<div class="actions-container">
 			<h2>Mes Projets</h2>
 			<!-- Boutons éditer site -->
-			<!-- gallery-modal -->
+			<!-- modal -->
 			<aside id="gallery-modal" class="modal" aria-hidden="true" aria-labelledby="titleModal" style="display: none;">
-				<div class="modal-wrapper" id="modal">
-					<span><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
+				<div class="modal-wrapper" id="modal" style="display: none;">
+					<span class="gallery-modal"><img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
 					<h3 id="titleModal" class="modal-title">Galerie photo</h3>
-					<div class="gallery-modal-content" id="gallery-modal-content">
+					<div class="gallery-modal-content" id="gallery-modal-content" style="display: none;">
+						<!-- js-gallery-modal -->
 					</div>
-					<a href="#add-photo-modal"> Ajouter une photo</a>
-					<button type="button" class="gallery-delete" id="gallery-delete" aria-label="gallery-delete">Supprimer la
-						galerie</button>
+					<div class="modal-wrapper-actions" id="modal-actions">
+						<button type="button" class="add-photo-modal" id="add-photo-modal">Ajouter une photo</button>
+					</div>
 				</div>
-			</aside>
-			<aside id="add-photo-modal" class="modal" aria-hidden="true" aria-labelledby="titleModal2" style="display: none;">
-				<div class="modal-wrapper" id="add-photo">
+				<div class="modal-wrapper" id="add-modal" style="display: none;">
+					<span class="add-modal"><img class="return-gallery-modal" id="return-gallery-modal" src="./assets/icons/Vector.svg" alt="return-gallery-modal">
+					<img class="close-modal" src="./assets/icons/xmark.svg" alt="close-modal"></span>
 					<h3 id="titleModal2" class="modal-title">Ajout photo</h3>
-					<button type="button" class="close-modal">X</button>
-					<form id="add-photo-form">
-						<div>
-							<label for="image">Image</label>
-							<input type="file" id="image" name="image" accept=".jpg, .png" required>
+					<div class="add-photo-modal-content" id="add-photo-modal-content">
+						<form id="add-photo-form" class="add-photo-form">
+								<!-- js-form-add-photo-form-->
+						</form>
+						<div class="modal-wrapper-actions" id="photo-modal-actions">
+							<button type="button" id="submit-button" class="grey-submit-button">Valider</button>
+							<p id="error-message" class="error-message"></p>
 						</div>
-						<div>
-							<label for="title">Titre</label>
-							<input type="text" id="title" name="title" required>
-						</div>
-						<div>
-						<!-- Options de catégorie seront ajoutées dynamiquement -->	
-						</div>
-						<button type="submit" id="add-photo-button" disabled>Valider</button>
-					</form>
-					<p id="error-message" class="error-message"></p>
+					</div>
 				</div>
 			</aside>
 		</div>

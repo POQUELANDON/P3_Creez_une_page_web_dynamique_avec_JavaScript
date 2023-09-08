@@ -230,14 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const editModeText = document.createElement('span');
         editModeText.textContent = 'Mode édition';
 
-        const publishButton = document.createElement('button');
-        publishButton.type = 'button';
-        publishButton.id = 'publish-changes';
-        publishButton.textContent = 'Publier les changements';
-
         adminBanner.appendChild(editIcon);
         adminBanner.appendChild(editModeText);
-        adminBanner.appendChild(publishButton);
 
         // Insérer le bandeau d'administration au-dessus de la balise header
         const header = document.querySelector('header');
@@ -307,38 +301,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
     const editSiteLinks = document.querySelectorAll('.js-modal');
     const modal = document.getElementById('gallery-modal');
+    const warpperModal = document.getElementById('modal');
     const modalContent = document.getElementById('gallery-modal-content');
 
-    // Vérifier si l'utilisateur est connecté
-    if (loggedInInfo && loggedInInfo.authenticated) {
+    // Fonction ouverture modale galerie
+    function openModal() {
+        // Ouvrir la fenêtre modale
+        modal.style.display = null;
+        modal.setAttribute('aria-hidden', 'false');
+        modal.setAttribute('aria-modal', 'true');
+        warpperModal.style.display = null;
+        modalContent.style.display = null;
+        addPhotoModal.style.display = 'none';
+        errorMessage.style.display = 'none';
+        modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
+
+
+        // Récupérer les images des works
+        const worksImages = Array.from(worksData);
+
+        // Générer le contenu HTML pour les images dans la fenêtre modale
+        let modalContentHTML = '';
+        worksImages.forEach(work => {
+            modalContentHTML +=
+                `<div data-work-id="${work.id}">
+                    <div class="js-modal-image">
+                        <img src="${work.imageUrl}" alt="${work.title}">
+                        <img id="work-delete" src="./assets/icons/trash-can-solid.svg" alt="Supprimer">
+                    </div>
+                </div>
+                `;
+        });
+
+        // Injecter le contenu HTML dans la fenêtre modale
+        modalContent.innerHTML = modalContentHTML;
+    }
+    
+        // Retour à la modale galerie "gallery"
+        const returnGalleryModal = document.getElementById('return-gallery-modal');
+
+        // Gestionnaire d'événements pour le clic sur retour à la modale galerie
+        returnGalleryModal.addEventListener('click', openModal);
+
+        // Ajoutez également l'écouteur d'événements pour les liens `.js-modal`
         editSiteLinks.forEach(link => {
-            link.addEventListener('click', () => {
-
-                // Ouvrir la fenêtre modale
-                modal.style.display = null;
-                modal.setAttribute('aria-hidden', 'false');
-                modal.setAttribute('aria-modal', 'true');
-
-                // Récupérer les images des works
-                const worksImages = Array.from(worksData);
-
-                // Générer le contenu HTML pour les images dans la fenêtre modale
-                let modalContentHTML = '';
-                worksImages.forEach(work => {
-                    modalContentHTML +=
-                        `<div data-work-id="${work.id}">
-                                    <div class="js-modal-image">
-                                        <img src="${work.imageUrl}" alt="${work.title}">
-                                        <img id="work-delete" src="./assets/icons/trash-can-solid.svg" alt="Supprimer">
-                                    </div>
-                                    <h4>éditer</h4>
-                            </div>
-                            `;
-                });
-
-                // Injecter le contenu HTML dans la fenêtre modale
-                modalContent.innerHTML = modalContentHTML;
-            });
+            link.addEventListener('click', openModal);
         });
 
         // Fermer la fenêtre modale en cliquant en dehors ou sur l'élément de fermeture
@@ -347,15 +354,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = 'none';
                 modal.setAttribute('aria-hidden', 'true');
                 modal.removeAttribute('aria-modal');
+                modalContent.style.display = 'none';
+                addPhotoModal.style.display = 'none';
+                errorMessage.style.display = 'none';
                 modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
             }
         });
-    }
 
     // Suppression de work dans la fenêtre modale
     modalContent.addEventListener('click', async (event) => {
         if (event.target.id === 'work-delete') {
             const workContainer = event.target.closest('div[data-work-id]');
+            openModal(workContainer);
             if (!workContainer) {
                 return;
             }
@@ -370,4 +380,271 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Afficher la modal d'ajout des works
+    const addPhotoModal = document.getElementById('add-modal');
+    const addPhotoButton = document.getElementById('add-photo-modal');
+    const submitButton = document.getElementById('submit-button');
+    const errorMessage = document.getElementById('error-message');
+
+    // Gérer l'ouverture de la fenêtre modale
+    addPhotoButton.addEventListener('click', () => {
+        warpperModal.style.display = 'none';
+        modalContent.style.display = 'none';
+        modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
+        addPhotoModal.style.display = null;
+        renderAddPhotoForm();
+    });
+
+    function getLastWorkId() {
+        // Parcourir la liste des works existants et trouver le dernier ID
+        let lastId = 0;
+        worksData.forEach(work => {
+            if (work.id > lastId) {
+                lastId = work.id;
+            }
+        });
+        return lastId;
+    }
+
+    // Fonction pour afficher le formulaire dans la fenêtre modale
+    function renderAddPhotoForm() {
+        const formHTML = `
+                <div class="image-input">
+                <input type="hidden" id="work-id-input" value="">
+                <img class="image-no-input" id="preview-image" src="./assets/icons/picture-svgrepo-com.svg" alt="Image preview">
+                <label for="image-input" id="add-input" class="add-input">+ Ajouter</label>
+                <input type="file" id="image-input" accept=".jpg, .png" name="+ Ajouter" required>
+                <p>jpg, png ; 4 Mo maximum.</p>
+                </div>
+                <label for="title-input" class="title-input">Titre</label>
+                <input type="text" id="title-input" required>
+                <label for="category-input" class="title-input">Catégorie</label>
+                <select id="category-input" required>
+                <option value="" disabled selected></option>
+                    <!-- Insérez ici les options de catégorie depuis les données -->
+                </select>
+                `;
+
+        const modalContent = document.getElementById('add-photo-form');
+        modalContent.innerHTML = formHTML;
+
+        // Fonction preview photo modal "add-photo"
+        const imageInput = document.getElementById('image-input');
+        imageInput.addEventListener('change', handleImageInputChange);
+
+        function handleImageInputChange(event) {
+            const selectedFile = event.target.files[0];
+            const label = event.target.parentElement; // Obtenez le label parent
+
+            // Vérifier si un fichier a été sélectionné
+            if (selectedFile) {
+                // Vérifier la taille du fichier (4 Mo maximum)
+                if (selectedFile.size > 4 * 1024 * 1024) { // 4 Mo en octets
+                    displayErrorMessage('L\'image ne doit pas dépasser 4 Mo.');
+                    event.target.value = ''; // Effacer la sélection de fichier
+                    return;
+                }
+
+                // Vérifier le format du fichier (jpg ou png)
+                const allowedFormats = ['image/jpeg', 'image/png'];
+                if (!allowedFormats.includes(selectedFile.type)) {
+                    displayErrorMessage('L\'image doit être au format JPG ou PNG.');
+                    event.target.value = ''; // Effacer la sélection de fichier
+                    return;
+                }
+
+                // Masquer les éléments input et p
+                const previewImage = document.getElementById('preview-image');
+                const labelledImage = document.getElementById('add-input');
+
+                event.target.style.display = 'none';
+                event.target.nextElementSibling.style.display = 'none'; // Le paragraphe p
+                label.style.justifyContent = 'center'; // Centrer l'image dans le label
+                previewImage.style.width = '129px'; // Agrandir l'image
+                previewImage.style.height = '193px';
+                labelledImage.style.display = 'none'; //Label preview image
+
+                // Prévisualiser l'image à l'aide de FileReader
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const previewImage = document.getElementById('preview-image');
+                    previewImage.src = reader.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                // Si aucun fichier n'a été sélectionné, restaurer l'image par défaut
+                previewImage.src = './assets/icons/picture-svgrepo-com.svg';
+
+                // Réafficher les éléments input et p
+                event.target.style.display = 'block';
+                event.target.nextElementSibling.style.display = 'block'; // Le paragraphe p
+                label.style.justifyContent = 'space-between'; // Rétablir l'alignement
+            }
+        }
+
+        function displayErrorMessage(message) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        // Charger les catégories depuis les données
+        loadCategories();
+
+        // Fonction pour charger les catégories depuis les données
+        async function loadCategories() {
+            try {
+                const response = await fetch('http://localhost:5678/api/categories', {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const categories = await response.json();
+                    const categoryInput = document.getElementById('category-input');
+
+                    // Remplir la liste déroulante des catégories
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id; // L'ID de la catégorie  envoyé à l'API
+                        option.textContent = category.name; // Afficher le nom de la catégorie
+                        categoryInput.appendChild(option);
+                    });
+                } else {
+                    console.error('Error fetching categories:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        // Fonction de vérification des champs
+        function checkFieldsAndToggleButton() {
+            const imageInput = document.getElementById('image-input');
+            const titleInput = document.getElementById('title-input');
+            const categoryInput = document.getElementById('category-input');
+            const submitButton = document.getElementById('submit-button');
+            const errorMessage = document.getElementById('error-message');
+
+            const imageFile = imageInput.files[0];
+            const title = titleInput.value;
+            const categoryId = categoryInput.value;
+
+            // Vérifier si tous les champs sont correctement remplis
+            const allFieldsFilled = imageFile && title && categoryId;
+
+            // Modifier la classe du bouton en fonction de l'état des champs
+            if (allFieldsFilled) {
+                submitButton.classList.add('green-button'); // Ajouter la classe pour le bouton vert
+            } else {
+                submitButton.classList.add('grey-submit-button'); // Retirer la classe du bouton
+            }
+
+            // Cacher le message d'erreur s'il était affiché
+            errorMessage.style.display = 'none';
+        }
+
+        // Ajouter des gestionnaires d'événements "input" pour les champs du formulaire
+        const titleInput = document.getElementById('title-input');
+        const categoryInput = document.getElementById('category-input');
+
+        imageInput.addEventListener('input', checkFieldsAndToggleButton);
+        titleInput.addEventListener('input', checkFieldsAndToggleButton);
+        categoryInput.addEventListener('input', checkFieldsAndToggleButton);
+
+
+        // Gestionnaire d'événements pour la soumission du formulaire
+        submitButton.addEventListener('click', async (event) => {
+            event.preventDefault(); // Empêcher la soumission du formulaire si des erreurs subsistent
+
+            // Récupérer le dernier ID disponible dans la liste des works
+            const lastWorkId = getLastWorkId();
+            // Générer un nouvel ID en incrémentant le dernier ID
+            const newWorkId = lastWorkId + 1;
+            // Mettre à jour la valeur du champ de formulaire caché
+            document.getElementById('work-id-input').value = newWorkId;
+            // Récupérer les valeurs du formulaire
+            const imageInput = document.getElementById('image-input');
+            const titleInput = document.getElementById('title-input');
+            const categoryInput = document.getElementById('category-input');
+
+            const imageFile = imageInput.files[0];
+            const title = titleInput.value;
+            const categoryId = categoryInput.value;
+
+            // Vérifier à nouveau que tous les champs sont remplis
+            if (!imageFile || !title || !categoryId) {
+                errorMessage.textContent = 'Tous les champs sont obligatoires.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Créer un objet FormData pour envoyer les données au format multipart/form-data
+            const formData = new FormData();
+            formData.append('id', newWorkId);
+            formData.append('image', imageFile);
+            formData.append('title', title);
+            formData.append('category', categoryId);
+
+            try {
+                const response = await fetch('http://localhost:5678/api/works', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${loggedInInfo.token}`
+                    },
+                    body: formData,
+                });
+
+                if (response.status === 201) {
+                    // Le work a été ajouté avec succès
+                    addPhotoModal.style.display = 'none';
+                    console.log('Le work a été ajouté avec succès');
+                    // Afficher le statut HTTP de la réponse
+                    console.log('Statut HTTP :', response.status);
+                    // Afficher le contenu de formData dans la console
+                    for (const entry of formData.entries()) {
+                        console.log(`${entry[0]}: ${entry[1]}`);
+                    }
+                    // Réinitialiser le formulaire
+                    imageInput.value = '';
+                    titleInput.value = '';
+                    categoryInput.value = '';
+                    submitButton.classList.add('grey-submit-button'); // Retirer la classe du bouton
+                    // Recharger la galerie
+                    await fetchWorksData();
+                } else {
+                    // Afficher une erreur en cas d'échec de la requête
+                    switch (response.status) {
+                        case 400:
+                        case 401:
+                            // Afficher un message d'erreur spécifique pour les erreurs 400 et 401
+                            errorMessage.textContent = 'Erreur de validation ou non autorisé.';
+                            break;
+                        case 403:
+                            // Afficher un message d'erreur spécifique pour l'erreur 403
+                            errorMessage.textContent = 'Accès interdit.';
+                            break;
+                        case 500:
+                        case 501:
+                        case 502:
+                        case 503:
+                            // Afficher un message d'erreur générique pour les erreurs 500+
+                            errorMessage.textContent = 'Erreur interne du serveur.';
+                            break;
+                        default:
+                            // Afficher un message d'erreur générique pour toutes les autres erreurs
+                            errorMessage.textContent = 'Une erreur est survenue lors de l\'ajout du work.';
+                            break;
+                    }
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                // Gérer les erreurs non liées à la réponse HTTP
+                console.error('Erreur:', error);
+            }
+        });
+    }
 });

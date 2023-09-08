@@ -93,6 +93,10 @@ video {
   vertical-align: baseline;
 }
 
+Body {
+  background: #FFFEF8;
+}
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -144,7 +148,7 @@ table {
   background: #000;
   color: #FFF;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -158,7 +162,7 @@ table {
   background: #FFF;
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -196,7 +200,7 @@ h1 {
   color: #b1663c;
 }
 
-h1 > span {
+h1>span {
   font-family: "Work Sans";
   font-size: 10px;
   letter-spacing: 0.1em;
@@ -241,8 +245,8 @@ a:hover {
 #introduction img.photo,
 #introduction .actions-container {
   display: block;
-  margin: auto;
-  width: 80%;
+  margin-right: auto;
+  width: 84%;
 }
 
 #introduction .actions-container {
@@ -264,6 +268,7 @@ a:hover {
 }
 
 #portfolio h2 {
+  margin-top: 1em;
   margin-bottom: 1em;
 }
 
@@ -272,7 +277,7 @@ a.js-modal {
   text-decoration: none;
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -303,7 +308,7 @@ a.js-modal {
   background-color: #fff;
   max-width: 630px;
   max-height: 731px;
-  border: 1px solid #888 321vw;
+  border: 1px solid #B3B3B3;
   width: 100%;
   height: max-content;
   flex-direction: column;
@@ -314,14 +319,14 @@ a.js-modal {
 h3.modal-title {
   color: #000;
   text-align: center;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 26px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 
-.modal-wrapper span {
+span.gallery-modal {
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
@@ -330,6 +335,16 @@ h3.modal-title {
   width: 100%;
 }
 
+span.add-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  align-content: baseline;
+  width: 100%;
+}
+
+.return-gallery-modal,
 .close-modal {
   font-size: 24px;
   font-weight: bold;
@@ -345,18 +360,19 @@ h3.modal-title {
   width: 65%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-column-gap: 6px;
-  grid-row-gap: 6px;
+  grid-column-gap: 2%;
+  grid-row-gap: 10%;
   justify-content: center;
   align-items: center;
   justify-items: center;
   align-content: stretch;
   border-bottom: 1px solid #B3B3B3;
-  padding: 30px 0 30px 0;
+  padding-top: 30px;
+  padding-bottom: 67px;
 }
 
 .js-modal-image {
-position: relative;
+  position: relative;
 }
 
 #gallery-modal-content img {
@@ -364,28 +380,18 @@ position: relative;
 }
 
 img#work-delete {
-background-color: black;
-padding: 4px;
-width: 9px;
-height: 11px;
-border-radius: 2px;
-cursor: pointer;
-position: absolute;
-top: 0;
-right: 0;
+  background-color: black;
+  padding: 4px;
+  width: 9px;
+  height: 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
-#gallery-modal-content h4 {
-  color: #000;
-  font-family: Work Sans;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-#modal>a {
-  display: flex;
+#add-photo-modal {
   text-decoration: none;
   color: #FFF;
   width: 237px;
@@ -397,25 +403,139 @@ right: 0;
   line-height: normal;
   border-radius: 60px;
   background: #1D6154;
-  justify-content: center;
-  align-items: center;
   margin: 30px;
+  border: none;
 }
 
+#modal-actions {
+  display: flex;
+  flex-direction: column;
+  padding-top: 38px;
+  padding-bottom: 48px;
+}
 
-#gallery-delete {
-text-decoration: none;
-border: none;
-background-color: #FFF;
-color: #D65353;
-text-align: center;
-font-family: Syne;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
-cursor: pointer;
-padding-bottom: 48px;
+.add-photo-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 36px;
+  padding-bottom: 47px;
+  border-bottom: 1px solid #B3B3B3;
+}
+
+.image-input {
+  display: flex;
+  width: 420px;
+  height: 169px;
+  border-radius: 3px;
+  background: #E8F1F6;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.add-input {
+  display: flex;
+  width: 173px;
+  height: 36px;
+  border-radius: 50px;
+  background: #CBD6DC;
+  align-items: center;
+  justify-content: center;
+  color: #306685;
+  text-align: center;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.image-no-input {
+  width: 76px;
+  height: 76px;
+}
+
+input[type=file] {
+  display: none;
+}
+
+.image-input>p {
+  color: #444;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.title-input {
+  color: #3D3D3D;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+#title-input,
+#category-input {
+  border: none;
+  width: 420px;
+  height: 51px;
+  background: #FFF;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+  color: #444;
+  font-family: "Work Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+#photo-modal-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 30px;
+  padding-bottom: 55px;
+  padding-top: 32px;
+}
+
+.grey-submit-button {
+  border: none;
+  width: 237px;
+  height: 36px;
+  border-radius: 60px;
+  background: #A7A7A7;
+  color: #FFF;
+  text-align: center;
+  font-family: Syne;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+#submit-button.green-button {
+  background: #1D6154;
+  color: white;
+  border: none;
+  width: 237px;
+  height: 36px;
+  border-radius: 60px;
+  text-align: center;
+  font-family: Syne;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  cursor: pointer;
 }
 
 .actions-container {
@@ -531,7 +651,7 @@ input[type="submit"]:hover {
   justify-content: center;
   margin-bottom: 20%;
   color: #3d3d3d;
-  font-family: Work Sans;
+  font-family: "Work Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
