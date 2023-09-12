@@ -173,7 +173,7 @@ const fetchWorksData = async () => {
         filterWorks('all');
     } catch (error) {
         console.error('Erreur:', error);
-        // Afficher le message d'erreur à l'utilisateur, en mettant à jour le div d'erreur.
+        // Afficher le message d'erreur à l'utilisateur, en mettant à jour le p d'erreur.
         const errorContainer = document.getElementById('error-container');
         errorContainer.textContent = error.message;
     }
