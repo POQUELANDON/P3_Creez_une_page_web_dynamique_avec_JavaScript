@@ -34,7 +34,7 @@ const createButton = (text, id) => {
     return button;
 };
 
-// Fonction pour filtrer et afficher les works en fonction de la catégorie sélectionnée
+// Fonction pour filtrer et afficher les œuvres en fonction de la catégorie sélectionnée
 const filterWorks = (selectedCategory) => {
     const galleryContainer = document.getElementById('gallery-container');
     galleryContainer.innerHTML = '';
@@ -42,7 +42,8 @@ const filterWorks = (selectedCategory) => {
     for (const work of worksData) {
         if (selectedCategory === 'all' || work.categoryId === Number(selectedCategory)) {
             const figure = document.createElement('figure');
-            const img = document.createElement('img');
+
+            const img = new Image();
             img.src = work.imageUrl;
             img.alt = work.title;
 
@@ -199,6 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.insertBefore(errorParagraph, submitButton);
     }
 
+    // Déclarer une variable pour suivre si l'erreur a déjà été affichée
+    let errorDisplayed = false;
+
     // Fonction pour gérer la soumission du formulaire de connexion
     async function handleLoginFormSubmit(event) {
         event.preventDefault();
@@ -228,15 +232,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 window.location.replace('index.html'); // Rediriger vers la page principale
             } else if (response.status === 401) {
-                const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
-                displayErrorMessage(errorMessage);
+                if (!errorDisplayed) {
+                    const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
+                    displayErrorMessage(errorMessage);
+                    errorDisplayed = true; // Marquer l'erreur comme affichée
+                }
             } else {
                 console.error('Échec de la connexion:', response.statusText);
             }
         } catch (error) {
             console.error('Erreur:', error);
-            const errorMessage = 'Une erreur est survenue lors de la connexion.';
-            displayErrorMessage(errorMessage);
+            if (!errorDisplayed) {
+                const errorMessage = 'Une erreur est survenue lors de la connexion.';
+                displayErrorMessage(errorMessage);
+                errorDisplayed = true; // Marquer l'erreur comme affichée
+            }
         }
     }
 });
@@ -297,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Fonction utilitaire pour envoyer des demandes authentifiées
+// Fonction pour envoyer des demandes authentifiées
 async function authenticatedRequest(url, method, data = {}) {
     const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
     if (!loggedInInfo || !loggedInInfo.authenticated || !loggedInInfo.token) {
@@ -512,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function handleImageInputChange(event) {
             const selectedFile = event.target.files[0];
-            const label = event.target.parentElement; // Obtenez le label parent
+            const label = event.target.parentElement; // Obtenir le label parent
 
             // Vérifier si un fichier a été sélectionné
             if (selectedFile) {
@@ -660,8 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.status === 201) {
-                    // Le work a été ajouté avec succès
-                    addPhotoModal.style.display = 'none';
+                    errorMessage.textContent = 'Le projet a été ajouté avec succès!';
                     console.log('Le work a été ajouté avec succès');
                     // Afficher le statut HTTP de la réponse
                     console.log('Statut HTTP :', response.status);
@@ -669,6 +678,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (const entry of formData.entries()) {
                         console.log(`${entry[0]}: ${entry[1]}`);
                     }
+                    // Ajouter un délai de 2 secondes avant de masquer le modal
+                    setTimeout(() => {
+                        addPhotoModal.style.display = 'none';
+                    }, 2000);
                     // Réinitialiser le formulaire
                     imageInput.value = '';
                     titleInput.value = '';
