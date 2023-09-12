@@ -7,7 +7,7 @@ class Work {
         this.categoryId = categoryId;
         this.userId = userId;
     }
-}
+};
 
 // Définir les variables
 const worksData = new Set();
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const submitButton = loginForm.querySelector('input[type="submit"]');
         loginForm.insertBefore(errorParagraph, submitButton);
-    }
+    };
 
     // Déclarer une variable pour suivre si l'erreur a déjà été affichée
     let errorDisplayed = false;
@@ -337,7 +337,7 @@ async function authenticatedRequest(url, method, data = {}) {
         console.error('Erreur:', error);
         throw error;
     }
-}
+};
 
 // Afficher la modal de gestion des works
 document.addEventListener('DOMContentLoaded', () => {
@@ -481,6 +481,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
         addPhotoModal.style.display = null;
         renderAddPhotoForm();
+        submitButton.classList.remove('green-button');
+        submitButton.classList.add('grey-submit-button');
     });
 
     function getLastWorkId() {
@@ -609,48 +611,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Modifier la classe du bouton en fonction de l'état des champs
             if (allFieldsFilled) {
+                submitButton.classList.remove('grey-submit-button'); // Retirer la classe 
                 submitButton.classList.add('green-button'); // Ajouter la classe pour le bouton vert
+                errorMessage.style.display = 'none'; // Cacher le message d'erreur s'il était affiché
             } else {
-                submitButton.classList.add('grey-submit-button'); // Retirer la classe du bouton
+                submitButton.classList.remove('green-button'); // Retirer la classe 
+                submitButton.classList.add('grey-submit-button'); // Ajouter la classe pour le bouton gris
+                errorMessage.textContent = 'Tous les champs sont obligatoires.';
+                errorMessage.style.display = 'block'; // Afficher le message d'erreur
             }
-
-            // Cacher le message d'erreur s'il était affiché
-            errorMessage.style.display = 'none';
         }
 
         // Ajouter des gestionnaires d'événements "input" pour les champs du formulaire
         const titleInput = document.getElementById('title-input');
         const categoryInput = document.getElementById('category-input');
+        const submitButton = document.getElementById('submit-button');
 
         imageInput.addEventListener('input', checkFieldsAndToggleButton);
         titleInput.addEventListener('input', checkFieldsAndToggleButton);
         categoryInput.addEventListener('input', checkFieldsAndToggleButton);
 
-
         // Gestionnaire d'événements pour la soumission du formulaire
         submitButton.addEventListener('click', async (event) => {
             event.preventDefault(); // Empêcher la soumission du formulaire si des erreurs subsistent
 
-            // Récupérer le dernier ID disponible dans la liste des works
-            const lastWorkId = getLastWorkId();
-            // Générer un nouvel ID en incrémentant le dernier ID
-            const newWorkId = lastWorkId + 1;
-            // Mettre à jour la valeur du champ de formulaire caché
-            document.getElementById('work-id-input').value = newWorkId;
-            // Récupérer les valeurs du formulaire
-            const imageInput = document.getElementById('image-input');
-            const titleInput = document.getElementById('title-input');
-            const categoryInput = document.getElementById('category-input');
-
+            // Récupérer les valeurs des champs du formulaire
             const imageFile = imageInput.files[0];
             const title = titleInput.value;
             const categoryId = categoryInput.value;
 
             // Vérifier à nouveau que tous les champs sont remplis
             if (!imageFile || !title || !categoryId) {
-                errorMessage.textContent = 'Tous les champs sont obligatoires.';
-                errorMessage.style.display = 'block';
-                return;
+                submitButton.classList.remove('green-button');
+                submitButton.classList.add('grey-submit-button');
+                return; // Ne rien faire si tous les champs ne sont pas remplis
             }
 
             // Créer un objet FormData pour envoyer les données au format multipart/form-data
@@ -686,7 +680,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageInput.value = '';
                     titleInput.value = '';
                     categoryInput.value = '';
-                    submitButton.classList.add('grey-submit-button'); // Retirer la classe du bouton
+                    submitButton.classList.remove('green-button');
+                    submitButton.classList.add('grey-submit-button');
                     // Recharger la galerie
                     await fetchWorksData();
                 } else {
