@@ -1,13 +1,16 @@
-
-const worksData = new Set();
-const workIds = []; // Tableau pour stocker les ID des travaux
-const categoryButtons = [];
+let worksData = new Set();
+let categoriesData = [];
+let categoryButtons = [];
 
 // Fonction pour gérer le clic sur les boutons de catégorie
 function handleCategoryButtonClick(clickedButton) {
     // Mettre à jour les classes des boutons de catégorie
     categoryButtons.forEach(button => {
-        button.classList.toggle('active', button === clickedButton);
+        if (button === clickedButton) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
     });
 
     const selectedCategory = clickedButton.id;
@@ -48,6 +51,8 @@ function filterWorks(selectedCategory) {
     categoryButtons.forEach(button => {
         const categoryId = button.id;
         const isActive = categoryId === selectedCategory;
+
+        // Ajouter ou retirer la classe "active" en fonction de la catégorie sélectionnée
         button.classList.toggle('active', isActive);
     });
 
@@ -67,19 +72,22 @@ async function fetchCategories() {
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Error fetching categories: ' + response.statusText);
+        if (response.ok) {
+            // Si la réponse est réussie, convertir les données en JSON
+            const categories = await response.json();
+            categoriesData = categories;
+
+            // Appeler la fonction pour créer les boutons de filtre de catégorie
+            createCategoryButtons(categories);
+
+            // Appeler la fonction pour récupérer les données des works
+            await fetchWorksData();
+        } else {
+            // Si la réponse n'est pas réussie, afficher une erreur dans la console
+            console.error('Error fetching categories:', response.statusText);
         }
-
-        // Si la réponse est réussie, convertir les données en JSON
-        const categories = await response.json();
-
-        // Créer les boutons de filtre de catégorie
-        createCategoryButtons(categories);
-
-        // Récupérer les données des works
-        await fetchWorksData();
     } catch (error) {
+        // En cas d'erreur, afficher une erreur dans la console
         console.error('Error fetching categories:', error);
     }
 }
@@ -98,13 +106,13 @@ function createCategoryButtons(categories) {
         const button = createButton(category.name, category.id);
         categoryFiltersContainer.appendChild(button);
         categoryButtons.push(button);
-        button.addEventListener('click', event => {
+        button.addEventListener('click', function (event) {
             handleCategoryButtonClick(event.target);
         });
     }
 
     // Ajouter un écouteur d'événements pour le filtrage par catégorie
-    categoryFiltersContainer.addEventListener('click', event => {
+    categoryFiltersContainer.addEventListener('click', function (event) {
         if (event.target.classList.contains('category-filter')) {
             const selectedCategory = event.target.id;
             filterWorks(selectedCategory);
@@ -122,55 +130,24 @@ async function fetchWorksData() {
             }
         });
 
-        if (!response.ok) {
-            // Gestion des erreurs réseau
-            const statusText = response.statusText;
-            let errorMessage = '';
-
-            switch (response.status) {
-                case 404:
-                    errorMessage = 'Les données des works n\'ont pas été trouvées.';
-                    break;
-                case 500:
-                    errorMessage = 'Une erreur interne du serveur s\'est produite.';
-                    break;
-                default:
-                    errorMessage = `Erreur inattendue: ${statusText}`;
-                    break;
-            }
-
-            throw new Error(errorMessage);
+        if (response.ok) {
+            // Si la réponse est réussie, convertir les données en JSON
+            const data = await response.json();
+            data.forEach(work => worksData.add(work));
+            // Filtrer les works pour afficher "Tous"
+            filterWorks('all');
+        } else {
+            // Si la réponse n'est pas réussie, afficher une erreur dans la console
+            console.error('Error fetching data:', response.statusText);
         }
-
-        // Si la réponse est réussie, convertir les données en JSON
-        const data = await response.json();
-
-        // Parcourir les données et créer des objets Work, puis les ajouter à worksData et workIds
-        data.forEach(work => {
-            const workObject = new Work(
-                work.id,
-                work.title,
-                work.imageUrl,
-                work.categoryId,
-                work.userId
-            );
-            worksData.add(workObject);
-            workIds.push(workObject.id);
-        });
-
-        // Filtrer les works pour afficher "Tous"
-        filterWorks('all');
     } catch (error) {
-        console.error('Erreur:', error);
-        // Afficher le message d'erreur à l'utilisateur, en mettant à jour le div d'erreur.
-        const errorContainer = document.getElementById('error-container');
-        errorContainer.textContent = error.message;
+        // En cas d'erreur, afficher une erreur dans la console
+        console.error('Error fetching data:', error);
     }
 }
 
 // Appel initial pour récupérer les catégories depuis l'API
 fetchCategories();
-
 
 // login.js - Module pour la page de connexion
 document.addEventListener('DOMContentLoaded', () => {
@@ -326,14 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('gallery-modal');
     const warpperModal = document.getElementById('modal');
     const modalContent = document.getElementById('gallery-modal-content');
-    const focusableSelector = 'button, select, input, a, img';
-    let focusables = [];
 
     // Fonction ouverture modale galerie
     function openModal() {
         // Ouvrir la fenêtre modale
-        focusables = Array.from(modal.querySelectorAll(focusableSelector));
-        focusables[0].focus();
         modal.style.display = null;
         modal.setAttribute('aria-hidden', 'false');
         modal.setAttribute('aria-modal', 'true');
@@ -363,67 +336,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Injecter le contenu HTML dans la fenêtre modale
         modalContent.innerHTML = modalContentHTML;
     }
+    
+        // Retour à la modale galerie "gallery"
+        const returnGalleryModal = document.getElementById('return-gallery-modal');
 
-    // Fonction fermeture modale
-    function closeModal() {
-        if (modal === null) return;
-        window.setTimeout(function () {
-            modal.style.display = 'none';
-            modalContent.style.display = 'none';
-            addPhotoModal.style.display = 'none';
-            errorMessage.style.display = 'none';
-            modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
-        }, 500);
-        modal.setAttribute('aria-hidden', 'true');
-        modal.removeAttribute('aria-modal');
-    }
+        // Gestionnaire d'événements pour le clic sur retour à la modale galerie
+        returnGalleryModal.addEventListener('click', openModal);
 
-    // Retour à la modale galerie "gallery"
-    const returnGalleryModal = document.getElementById('return-gallery-modal');
+        // Ajoutez également l'écouteur d'événements pour les liens `.js-modal`
+        editSiteLinks.forEach(link => {
+            link.addEventListener('click', openModal);
+        });
 
-    // Gestionnaire d'événements pour le clic sur retour à la modale galerie
-    returnGalleryModal.addEventListener('click', openModal);
-
-    // Ajoutez également l'écouteur d'événements pour les liens `.js-modal`
-    editSiteLinks.forEach(link => {
-        link.addEventListener('click', openModal);
-    });
-
-    // Focus dans la modale 
-    const focusInModal = function (e) {
-        e.preventDefault();
-        let index = focusables.findIndex(f => f === modal.querySelector(':focus'));
-        index++;
-        if (e.shiftKey === true) {
-            index--;
-        } else {
-            index++;
-        }
-        if (index >= focusables.length) {
-            index = 0;
-        }
-        if (index < 0) {
-            index = focusables.length - 1;
-        }
-        focusables[index].focus();
-    }
-
-    // Fermer la fenêtre modale au clavier
-    window.addEventListener('keydown', function (e) {
-        if (e.key === 'Esc' || e.key === 'Escape') {
-            closeModal();
-        }
-        if (e.key === 'Tab' && modal !== null) {
-            focusInModal(e);
-        }
-    });
-
-    // Fermer la fenêtre modale en cliquant en dehors ou sur l'élément de fermeture
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal || event.target.classList.contains('close-modal')) {
-            closeModal();
-        }
-    });
+        // Fermer la fenêtre modale en cliquant en dehors ou sur l'élément de fermeture
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal || event.target.classList.contains('close-modal')) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.removeAttribute('aria-modal');
+                modalContent.style.display = 'none';
+                addPhotoModal.style.display = 'none';
+                errorMessage.style.display = 'none';
+                modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
+            }
+        });
 
     // Suppression de work dans la fenêtre modale
     modalContent.addEventListener('click', async (event) => {
@@ -438,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 await authenticatedRequest(`http://localhost:5678/api/works/${workId}`, 'DELETE');
-
                 workContainer.remove(); // Supprimer l'élément du DOM
             } catch (error) {
                 console.error('Error:', error);
@@ -454,8 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gérer l'ouverture de la fenêtre modale
     addPhotoButton.addEventListener('click', () => {
-        focusables = Array.from(modal.querySelectorAll(focusableSelector));
-        focusables[0].focus();
         warpperModal.style.display = 'none';
         modalContent.style.display = 'none';
         modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
