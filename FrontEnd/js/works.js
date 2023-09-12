@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('gallery-modal');
     const warpperModal = document.getElementById('modal');
     const modalContent = document.getElementById('gallery-modal-content');
-    const focusableSelector = 'button, select, input, a, img, optin, label';
+    const focusableSelector = 'button, select, input, a, img, option, label';
     let focusables = [];
 
     // Fonction ouverture modale galerie
