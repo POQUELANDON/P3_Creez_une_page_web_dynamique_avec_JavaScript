@@ -678,10 +678,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (const entry of formData.entries()) {
                         console.log(`${entry[0]}: ${entry[1]}`);
                     }
-                    // Ajouter un délai de 2 secondes avant de masquer le modal
+                    // Ajouter un délai de 3 secondes avant de masquer la modale
                     setTimeout(() => {
                         addPhotoModal.style.display = 'none';
-                    }, 2000);
+                    }, 3000);
                     // Réinitialiser le formulaire
                     imageInput.value = '';
                     titleInput.value = '';
