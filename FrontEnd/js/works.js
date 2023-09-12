@@ -1,13 +1,3 @@
-// Définir un objet Work pour stocker les informations de chaque travail
-class Work {
-    constructor(id, title, imageUrl, categoryId, userId) {
-        this.id = id;
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.categoryId = categoryId;
-        this.userId = userId;
-    }
-}
 
 const worksData = new Set();
 const workIds = []; // Tableau pour stocker les ID des travaux
