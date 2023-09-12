@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Créer un objet FormData pour envoyer les données au format multipart/form-data
             const formData = new FormData();
-            formData.append('id', newWorkId);
+            formData.append('id', getLastWorkId);
             formData.append('image', imageFile);
             formData.append('title', title);
             formData.append('category', categoryId);
