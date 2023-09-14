@@ -237,9 +237,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     displayErrorMessage(errorMessage);
                     errorDisplayed = true; // Marquer l'erreur comme affichée
                 }
+            } else if (response.status === 404) {
+                if (!errorDisplayed) {
+                    const errorMessage = 'Utilisateur introuvable';
+                    displayErrorMessage(errorMessage);
+                    errorDisplayed = true; // Marquer l'erreur comme affichée
+                }
             } else {
                 console.error('Échec de la connexion:', response.statusText);
-            }
+            } 
         } catch (error) {
             console.error('Erreur:', error);
             if (!errorDisplayed) {
