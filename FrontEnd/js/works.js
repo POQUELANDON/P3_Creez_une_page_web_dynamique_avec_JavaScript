@@ -34,7 +34,7 @@ const createButton = (text, id) => {
     return button;
 };
 
-// Fonction pour filtrer et afficher les œuvres en fonction de la catégorie sélectionnée
+// Fonction pour filtrer et afficher les works en fonction de la catégorie sélectionnée
 const filterWorks = (selectedCategory) => {
     const galleryContainer = document.getElementById('gallery-container');
     galleryContainer.innerHTML = '';
@@ -56,14 +56,14 @@ const filterWorks = (selectedCategory) => {
         }
     }
 
-    // Mettre à jour les classes des boutons de catégorie
+    // Mettre à jour les classes des boutons de catégorie (peut rester inchangée)
     categoryButtons.forEach(button => {
         const categoryId = button.id;
         const isActive = categoryId === selectedCategory;
         button.classList.toggle('active', isActive);
     });
 
-    // Mettre à jour la classe "active" du bouton "Tous"
+    // Mettre à jour la classe "active" du bouton "Tous" (peut rester inchangée)
     const allButton = document.getElementById('all');
     const isAnyButtonActive = categoryButtons.some(button => button.classList.contains('active'));
     allButton.classList.toggle('active', !isAnyButtonActive);
@@ -170,14 +170,20 @@ const fetchWorksData = async () => {
             workIds.push(workObject.id);
         });
 
-        // Filtrer les works pour afficher "Tous"
-        filterWorks('all');
+        // Filtrer les works pour afficher la catégorie actuellement sélectionnée
+        const selectedCategory = getSelectedCategory(); // Ajoutez une fonction pour obtenir la catégorie sélectionnée
+        filterWorks(selectedCategory);
     } catch (error) {
         console.error('Erreur:', error);
         // Afficher le message d'erreur à l'utilisateur, en mettant à jour le p d'erreur.
         const errorContainer = document.getElementById('error-container');
         errorContainer.textContent = error.message;
     }
+};
+
+const getSelectedCategory = () => {
+    const activeButton = categoryButtons.find(button => button.classList.contains('active'));
+    return activeButton ? activeButton.id : 'all';
 };
 
 // Appel initial pour récupérer les catégories depuis l'API
@@ -200,12 +206,18 @@ document.addEventListener('DOMContentLoaded', () => {
         loginForm.insertBefore(errorParagraph, submitButton);
     };
 
-    // Déclarer une variable pour suivre si l'erreur a déjà été affichée
-    let errorDisplayed = false;
+    // Fonction pour réinitialiser les messages d'erreur
+    function clearErrorMessages() {
+        const errorMessages = loginForm.querySelectorAll('.error-message');
+        errorMessages.forEach(errorMessage => errorMessage.remove());
+    };
 
     // Fonction pour gérer la soumission du formulaire de connexion
     async function handleLoginFormSubmit(event) {
         event.preventDefault();
+
+        // Effacer les anciens messages d'erreur
+        clearErrorMessages();
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -229,30 +241,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Stocker le token d'authentification dans le localStorage
                 localStorage.setItem('loggedIn', JSON.stringify({ email, authenticated: true, token }));
-
                 window.location.replace('index.html'); // Rediriger vers la page principale
             } else if (response.status === 401) {
-                if (!errorDisplayed) {
-                    const errorMessage = 'Erreur dans l’identifiant ou le mot de passe';
+                    const errorMessage = 'Erreur dans le mot de passe';
                     displayErrorMessage(errorMessage);
-                    errorDisplayed = true; // Marquer l'erreur comme affichée
-                }
             } else if (response.status === 404) {
-                if (!errorDisplayed) {
                     const errorMessage = 'Utilisateur introuvable';
                     displayErrorMessage(errorMessage);
-                    errorDisplayed = true; // Marquer l'erreur comme affichée
-                }
             } else {
                 console.error('Échec de la connexion:', response.statusText);
-            } 
+            }
         } catch (error) {
             console.error('Erreur:', error);
-            if (!errorDisplayed) {
                 const errorMessage = 'Une erreur est survenue lors de la connexion.';
                 displayErrorMessage(errorMessage);
-                errorDisplayed = true; // Marquer l'erreur comme affichée
-            }
         }
     }
 });
@@ -313,38 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Fonction pour envoyer des demandes authentifiées
-async function authenticatedRequest(url, method, data = {}) {
-    const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
-    if (!loggedInInfo || !loggedInInfo.authenticated || !loggedInInfo.token) {
-        throw new Error('User is not authenticated.');
-    }
-
-    const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        // Ajouter le token d'authentification dans les en-têtes
-        'Authorization': `Bearer ${loggedInInfo.token}`
-    };
-
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: headers,
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        return response.json();
-    } catch (error) {
-        console.error('Erreur:', error);
-        throw error;
-    }
-};
-
 // Afficher la modal de gestion des works
 document.addEventListener('DOMContentLoaded', () => {
     const loggedInInfo = JSON.parse(localStorage.getItem('loggedIn'));
@@ -369,13 +339,9 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.style.display = 'none';
         modalContent.innerHTML = ''; // Effacer le contenu de la fenêtre modale
 
-
-        // Récupérer les images des works
-        const worksImages = Array.from(worksData);
-
         // Générer le contenu HTML pour les images dans la fenêtre modale
         let modalContentHTML = '';
-        worksImages.forEach(work => {
+        worksData.forEach(work => {
             modalContentHTML +=
                 `<div data-work-id="${work.id}">
                     <div class="js-modal-image">
@@ -388,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Injecter le contenu HTML dans la fenêtre modale
         modalContent.innerHTML = modalContentHTML;
-    }
+    };
 
     // Fonction fermeture modale
     function closeModal() {
@@ -402,7 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
         modal.setAttribute('aria-hidden', 'true');
         modal.removeAttribute('aria-modal');
-    }
+        window.location.replace('index.html'); // Rediriger vers la page principale
+    };
 
     // Retour à la modale galerie "gallery"
     const returnGalleryModal = document.getElementById('return-gallery-modal');
@@ -432,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
             index = focusables.length - 1;
         }
         focusables[index].focus();
-    }
+    };
 
     // Fermer la fenêtre modale au clavier
     window.addEventListener('keydown', function (e) {
@@ -455,7 +422,6 @@ document.addEventListener('DOMContentLoaded', () => {
     modalContent.addEventListener('click', async (event) => {
         if (event.target.id === 'work-delete') {
             const workContainer = event.target.closest('div[data-work-id]');
-            openModal(workContainer);
             if (!workContainer) {
                 return;
             }
@@ -463,9 +429,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const workId = workContainer.getAttribute('data-work-id');
 
             try {
-                await authenticatedRequest(`http://localhost:5678/api/works/${workId}`, 'DELETE');
+                const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${loggedInInfo.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                workContainer.remove(); // Supprimer l'élément du DOM
+                if (response.status === 204) {
+                    // Réponse 204 : Item Deleted
+                    console.log('Item Deleted');
+                    workContainer.remove(); // Supprimer l'élément du DOM
+                    closeModal();
+                } else if (response.status === 401) {
+                    // Réponse 401 : Unauthorized
+                    console.error('Unauthorized');
+                } else if (response.status === 500) {
+                    // Réponse 500 : Unexpected Behaviour
+                    console.error('Unexpected Behaviour');
+                }
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -670,26 +653,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.status === 201) {
+                    closeModal();
                     errorMessage.textContent = 'Le projet a été ajouté avec succès!';
                     console.log('Le work a été ajouté avec succès');
                     // Afficher le statut HTTP de la réponse
                     console.log('Statut HTTP :', response.status);
-                    // Afficher le contenu de formData dans la console
-                    for (const entry of formData.entries()) {
-                        console.log(`${entry[0]}: ${entry[1]}`);
-                    }
-                    // Ajouter un délai de 3 secondes avant de masquer la modale
-                    setTimeout(() => {
-                        addPhotoModal.style.display = 'none';
-                    }, 3000);
-                    // Réinitialiser le formulaire
-                    imageInput.value = '';
-                    titleInput.value = '';
-                    categoryInput.value = '';
-                    submitButton.classList.remove('green-button');
-                    submitButton.classList.add('grey-submit-button');
-                    // Recharger la galerie
-                    await fetchWorksData();
+
                 } else {
                     // Afficher une erreur en cas d'échec de la requête
                     switch (response.status) {

@@ -304,21 +304,6 @@ a.js-modal {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
-animation: fadeIn .3s both;
-}
-
-@keyframes fadeIn {
-form  { opacity: 0;}
-to {  opacity: 1;}
-}
-
-#gallery-modal[aria-hidden="true"] {
-  animation-name: fadeOut;
-}
-
-@keyframes fadeOut {
-  form { opacity: 1; }
-  to { opacity: 0; }
 }
 
 .modal-wrapper {
@@ -333,22 +318,8 @@ to {  opacity: 1;}
   flex-direction: column;
   align-items: center;
   border-radius: 10px;
-animation: slideFromTop .3s both;
 }
 
-@keyframes slideFromTop {
-  from { transform: translateY(-50px); }
-  to { transform:translateY(0px); }
-}
-
-#gallery-modal[aria-hidden="true"] .modal-wrapper{
-  animation-name: slideFromBottom;
-}
-
-@keyframes slideFromBottom {
-  from { transform: translateY(0px); }
-  to { transform: translateY(-50px); }
-}
 
 h3.modal-title {
   color: #000;
