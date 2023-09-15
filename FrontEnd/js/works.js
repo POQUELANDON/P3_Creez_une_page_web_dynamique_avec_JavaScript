@@ -445,7 +445,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Item Deleted');
                     workContainer.remove(); // Supprimer l'élément du DOM
                     fetchWorksData();
-                    closeModal();
                 } else if (response.status === 401) {
                     // Réponse 401 : Unauthorized
                     console.error('Unauthorized');
