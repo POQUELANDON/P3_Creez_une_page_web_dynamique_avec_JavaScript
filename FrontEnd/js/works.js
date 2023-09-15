@@ -368,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
         modal.setAttribute('aria-hidden', 'true');
         modal.removeAttribute('aria-modal');
-        window.location.replace('index.html'); // Rediriger vers la page principale
     };
 
     // Retour à la modale galerie "gallery"
