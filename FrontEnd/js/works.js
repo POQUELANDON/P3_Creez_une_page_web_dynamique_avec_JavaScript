@@ -153,6 +153,9 @@ const fetchWorksData = async () => {
 
             throw new Error(errorMessage);
         }
+        // Nettoyer les données précédentes et les IDs
+        worksData.clear();
+        workIds.length = 0;
 
         // Si la réponse est réussie, convertir les données en JSON
         const data = await response.json();
@@ -166,6 +169,7 @@ const fetchWorksData = async () => {
                 work.categoryId,
                 work.userId
             );
+
             worksData.add(workObject);
             workIds.push(workObject.id);
         });
@@ -440,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Réponse 204 : Item Deleted
                     console.log('Item Deleted');
                     workContainer.remove(); // Supprimer l'élément du DOM
+                    fetchWorksData();
                     closeModal();
                 } else if (response.status === 401) {
                     // Réponse 401 : Unauthorized
@@ -657,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Le work a été ajouté avec succès');
                     // Afficher le statut HTTP de la réponse
                     console.log('Statut HTTP :', response.status);
-
+                    fetchWorksData();
                 } else {
                     // Afficher une erreur en cas d'échec de la requête
                     switch (response.status) {
